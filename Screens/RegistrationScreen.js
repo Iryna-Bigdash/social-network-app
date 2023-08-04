@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+
 import {
   View,
   Text,
@@ -10,21 +11,43 @@ import {
   ScrollView,
   Keyboard,
   Pressable,
+  Platform
 } from "react-native";
+
+import { useNavigation } from "@react-navigation/native";
 
 import bgrPhoto from "../assets/images/bgrPhoto.png";
 
 import { AntDesign } from "@expo/vector-icons";
 
 const RegistrationScreen = () => {
+  const navigation = useNavigation();
+
+  const [login, setLogin] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
   const [isLoginFocused, setIsLoginFocused] = useState(false);
   const [isEmailFocused, setIsEmailFocused] = useState(false);
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
 
   const [hidePassword, setHidePassword] = useState(true);
+
+  const registration = () => {
+    console.log("Login: ", login);
+    console.log("Email: ", email);
+    console.log("Password: ", password);
+
+    setLogin("");
+    setEmail("");
+    setPassword("");
+
+    navigation.navigate("Home", { login, email, password });
+  };
+
   const togglePassword = () => {
     setHidePassword((prevState) => !prevState);
-    // console.log("hidePassword", hidePassword);
+    console.log("hidePassword", hidePassword);
   };
 
   return (
@@ -59,6 +82,8 @@ const RegistrationScreen = () => {
                   placeholderTextColor="#BDBDBD"
                   onFocus={() => setIsLoginFocused(true)}
                   onBlur={() => setIsLoginFocused(false)}
+                  value={login}
+                  onChangeText={setLogin}
                 />
               </View>
               <View style={styles.inputWrap}>
@@ -67,15 +92,23 @@ const RegistrationScreen = () => {
                   placeholder="Адреса електронної пошти"
                   onFocus={() => setIsEmailFocused(true)}
                   onBlur={() => setIsEmailFocused(false)}
+                  value={email}
+                  onChangeText={setEmail}
                 />
               </View>
               <View style={styles.inputWrap}>
                 <TextInput
-                  style={[styles.input, isPasswordFocused && styles.focusedInput]}
+                  style={[
+                    styles.input,
+                    isPasswordFocused && styles.focusedInput,
+                  ]}
                   placeholder="Пароль"
                   name="password"
                   onFocus={() => setIsPasswordFocused(true)}
                   onBlur={() => setIsPasswordFocused(false)}
+                  value={password}
+                  onChangeText={setPassword}
+                  secureTextEntry={hidePassword}
                 />
                 <Pressable
                   style={styles.pressableShowPassword}
@@ -86,7 +119,7 @@ const RegistrationScreen = () => {
                   </Text>
                 </Pressable>
               </View>
-              <Pressable style={styles.button}>
+              <Pressable style={styles.button} onPress={registration}>
                 <Text style={styles.buttonText}>Зареєcтруватися</Text>
               </Pressable>
               <Pressable
@@ -142,7 +175,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   title: {
-    fontFamily: "r-medium'",
+    fontFamily: "r-medium",
     fontStyle: "normal",
     fontWeight: "500",
     fontSize: 30,

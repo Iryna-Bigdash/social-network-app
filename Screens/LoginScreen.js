@@ -34,6 +34,8 @@ const LoginScreen = () => {
   };
 
   const login = () => {
+    console.log("Email: ", email);
+    console.log("Password: ", password);
     setEmail("");
     setPassword("");
     navigation.navigate("Home");
