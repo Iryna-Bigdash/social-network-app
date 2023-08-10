@@ -4,10 +4,9 @@ import { ScrollView } from "react-native-gesture-handler";
 
 import RomanovaImg from "../assets/images/userRomanova.jpg";
 
-
 const PostsScreen = () => {
   return (
-<View style={styles.container}>
+    <View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.headerLeft}></View>
         <View style={styles.headerCenter}>
@@ -17,7 +16,7 @@ const PostsScreen = () => {
       <ScrollView style={styles.mainContext}>
         <View style={styles.userWrap}>
           <View style={styles.userPhotoWrap}>
-          <Image source={RomanovaImg} />
+            <Image source={RomanovaImg} />
           </View>
           <View style={styles.infoWrap}>
             <Text style={styles.name}>Natali Romanova</Text>
@@ -26,7 +25,6 @@ const PostsScreen = () => {
         </View>
       </ScrollView>
     </View>
-
   );
 };
 
@@ -86,7 +84,7 @@ const styles = StyleSheet.create({
   },
 
   name: {
-    fontFamily: "r-bold",
+    fontFamily: "r-bolt",
     fontSize: 13,
     lineHeight: 15,
     lineHeight: 15,

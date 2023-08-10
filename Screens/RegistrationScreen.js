@@ -11,7 +11,7 @@ import {
   ScrollView,
   Keyboard,
   Pressable,
-  Platform
+  Platform,
 } from "react-native";
 
 import { useNavigation } from "@react-navigation/native";

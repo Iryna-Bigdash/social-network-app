@@ -7,7 +7,7 @@ import {
   Keyboard,
   Text,
   ImageBackground,
-  View, 
+  View,
   TextInput,
   Pressable,
   Platform,
@@ -60,10 +60,7 @@ const LoginScreen = () => {
                 <TextInput
                   style={
                     focusEmailInput
-                      ? [
-                          styles.input,
-                          styles.focusedInput,
-                        ]
+                      ? [styles.input, styles.focusedInput]
                       : styles.input
                   }
                   placeholder="Адреса електронної пошти"
@@ -78,10 +75,7 @@ const LoginScreen = () => {
                 <TextInput
                   style={
                     focusPasswordInput
-                      ? [
-                          styles.input,
-                          styles.focusedInput,
-                        ]
+                      ? [styles.input, styles.focusedInput]
                       : styles.input
                   }
                   placeholder="Пароль"
@@ -112,9 +106,7 @@ const LoginScreen = () => {
               >
                 <Text style={styles.linkText}>
                   Немає акаунту?&nbsp;
-                  <Text style={styles.underline}>
-                    Зареєструватися
-                  </Text>
+                  <Text style={styles.underline}>Зареєструватися</Text>
                 </Text>
               </Pressable>
             </ScrollView>
