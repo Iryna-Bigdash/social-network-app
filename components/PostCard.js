@@ -3,7 +3,7 @@ import { useNavigation } from "@react-navigation/native";
 import { AntDesign } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-const PictureCard = ({ pictureSource, title, comments, likes, location }) => {
+const PostCard = ({ pictureSource, title, comments, likes, location }) => {
   const navigation = useNavigation();
 
   return (
@@ -52,7 +52,7 @@ const PictureCard = ({ pictureSource, title, comments, likes, location }) => {
   );
 };
 
-export default PictureCard;
+export default PostCard;
 
 const styles = StyleSheet.create({
   pictureCard: {

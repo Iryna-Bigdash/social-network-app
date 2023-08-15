@@ -1,103 +1,107 @@
 import { View, Text, StyleSheet, Image } from "react-native";
-
 import { ScrollView } from "react-native-gesture-handler";
+import { useNavigation } from "@react-navigation/native";
+import { Feather } from "@expo/vector-icons";
 
 import RomanovaImg from "../assets/images/userRomanova.jpg";
+import PostCard from "../components/PostCard";
+import Forest from "../assets/images/forest.jpg";
+import Sunset from "../assets/images/sunset.jpg";
+import oldHouse from "../assets/images/oldHouse.jpg";
+
 
 const PostsScreen = () => {
+  const navigation = useNavigation();
+
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <View style={styles.headerLeft}></View>
-        <View style={styles.headerCenter}>
-          <Text style={styles.headerTitle}>Публікації</Text>
-        </View>
-      </View>
-      <ScrollView style={styles.mainContext}>
-        <View style={styles.userWrap}>
-          <View style={styles.userPhotoWrap}>
+      <ScrollView contentContainerStyle={styles.screenMainContent}>
+        <View style={styles.userBlock}>
+          <View style={styles.userBlockPhotoWrap}>
             <Image source={RomanovaImg} />
           </View>
-          <View style={styles.infoWrap}>
-            <Text style={styles.name}>Natali Romanova</Text>
-            <Text style={styles.email}>n.romanova@gmail.com</Text>
+          <View style={styles.userBlockInfo}>
+            <Text style={styles.userBlockName}>Natali Romanova</Text>
+            <Text style={styles.userBlockEmail}>
+              email@example.com
+            </Text>
           </View>
         </View>
+
+        <PostCard
+          pictureSource={Forest}
+          title="Ліс"
+          comments="0"
+          likes="0"
+          location="Ivano-Frankivs'k Region, Ukraine"
+          hideLikes
+        />
+        <PostCard
+          pictureSource={Sunset}
+          title="Захід на Чорному морі"
+          comments="0"
+          likes="0"
+          location="Odessa Region, Ukraine"
+        />
+        <PostCard
+          pictureSource={oldHouse}
+          title="Старий будиночок у Венеції"
+          comments="0"
+          likes="0"
+          location="Venice Region, Italy"
+          hideLikes
+        />
       </ScrollView>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
-  header: {
-    marginTop: 33,
-    minHeight: 33,
-    paddingBottom: 11,
-    flexDirection: "row",
-    borderBottomWidth: 1,
-    borderColor: "#BDBDBD",
-  },
-  headerLeft: {
-    alignItems: "center",
-    justifyContent: "center",
-    width: "15%",
-  },
-  headerCenter: {
-    alignItems: "center",
-    justifyContent: "center",
-    width: "70%",
-  },
-  headerRight: {
-    alignItems: "center",
-    justifyContent: "center",
-    width: "15%",
-  },
-  headerTitle: {
-    fontFamily: "r-medium",
-    fontSize: 17,
-    lineHeight: 22,
-    color: "#212121",
-  },
-  mainContext: {
-    marginBottom: 0,
-    paddingLeft: 16,
-    paddingRight: 16,
-    paddingTop: 22,
-  },
-  userWrap: {
-    height: 60,
-    flexDirection: "row",
-    marginBottom: 16,
-  },
+container: {
+  flex: 1,
+},
+screenMainContent: {
+  paddingTop: 32,
+  backgroundColor: "#fff",
+  alignItems: "center",
+  paddingBottom: 24,
+},
 
-  userPhotoWrap: {
-    borderRadius: 16,
-    overflow: "hidden",
-  },
-  infoWrap: {
-    paddingLeft: 8,
-    justifyContent: "center",
-  },
+userBlock: {
+  height: 60,
+  flexDirection: "row",
+  marginBottom: 16,
+  width: 343,
+},
 
-  name: {
-    fontFamily: "r-bolt",
-    fontSize: 13,
-    lineHeight: 15,
-    lineHeight: 15,
-    color: "#212121",
-  },
+userBlockPhotoWrap: {
+  borderRadius: 16,
+  overflow: "hidden",
+},
+userBlockInfo: {
+  paddingLeft: 8,
+  justifyContent: "center",
+},
 
-  email: {
-    fontFamily: "r-regular",
-    fontSize: 11,
-    lineHeight: 13,
-    lineHeight: 13,
-    color: "rgba(33, 33, 33, 0.8)",
-  },
+userBlockName: {
+  fontFamily: "r-bolt",
+  fontStyle: "normal",
+  fontWeight: "700",
+  fontSize: 13,
+  lineHeight: 15,
+  lineHeight: 15,
+  color: "#212121",
+},
+
+userBlockEmail: {
+  fontFamily: "r-regular",
+  fontStyle: "normal",
+  fontWeight: "400",
+  fontSize: 11,
+  lineHeight: 13,
+  lineHeight: 13,
+  color: "rgba(33, 33, 33, 0.8)",
+},
 });
 
 export default PostsScreen;

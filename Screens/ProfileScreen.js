@@ -17,7 +17,7 @@ import Forest from "../assets/images/forest.jpg";
 import Sunset from "../assets/images/sunset.jpg";
 import oldHouse from "../assets/images/oldHouse.jpg";
 
-import PictureCard from "../components/PictureCard";
+import PostCard from "../components/PostCard";
 
 const ProfileScreen = () => {
   const navigation = useNavigation();
@@ -52,21 +52,21 @@ const ProfileScreen = () => {
           </Pressable>
           <Text style={styles.profileName}>Natali Romanova</Text>
 
-          <PictureCard
+          <PostCard
             pictureSource={Forest}
             title="Ліс"
             comments="8"
             likes="153"
             location="Ukraine"
           />
-          <PictureCard
+          <PostCard
             pictureSource={Sunset}
             title="Захід на Чорному морі"
             comments="3"
             likes="200"
             location="Ukraine"
           />
-          <PictureCard
+          <PostCard
             pictureSource={oldHouse}
             title="Старий будиночок у Венеції"
             comments="5"

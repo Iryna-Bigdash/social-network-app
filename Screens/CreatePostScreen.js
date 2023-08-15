@@ -1,5 +1,7 @@
-import React, { useState } from "react";
-
+import React, { useState, useEffect } from "react";
+import { Camera } from "expo-camera";
+import * as MediaLibrary from "expo-media-library";
+import * as Location from "expo-location";
 import {
   Text,
   View,
@@ -19,9 +21,80 @@ import { Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 
 const CreatePostsScreen = () => {
+  const [hasPermission, setHasPermission] = useState(null);
+  const [cameraRef, setCameraRef] = useState(null);
+  const [type, setType] = useState(Camera.Constants.Type.back);
+  const [location, setLocation] = useState(null);
   const [photoURI, setPhotoURI] = useState(null);
+  const [isTitleFocused, setIsTitleFocused] = useState(false);
+  const [isPlaceFocused, setIsPlaceFocused] = useState(false);
+  const [isButtonPressed, setIsButtonPressed] = useState(false);
+  const [title, setTitle] = useState("");
+  const [place, setPlace] = useState("");
 
   const navigation = useNavigation();
+
+  useEffect(() => {
+    (async () => {
+      const { status } = await Camera.requestCameraPermissionsAsync();
+      await MediaLibrary.requestPermissionsAsync();
+
+      setHasPermission(status === "granted");
+    })();
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        console.log("Permission to access location was denied");
+      }
+
+      let location = await Location.getCurrentPositionAsync({});
+      const coords = {
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      };
+      setLocation(coords);
+    })();
+  }, []);
+
+  const makePhoto = async () => {
+    if (cameraRef) {
+      const { uri } = await cameraRef.takePictureAsync({
+        quality: 1,
+        base64: true,
+      });
+
+      setPhotoURI(uri);
+    }
+  };
+
+  const handleSubmit = async () => {
+    console.log("Post created");
+
+    if (location) {
+      try {
+        const address = await Location.reverseGeocodeAsync(location);
+        console.log("Location:", location);
+        console.log("Address:", address);
+      } catch (error) {
+        console.error("Error while reverse geocoding:", error);
+      }
+    } else {
+      console.warn("Location is not available");
+    }
+
+    navigation.navigate("PostsScreen");
+  };
+
+  if (hasPermission === null) {
+    return <View />;
+  }
+
+  if (hasPermission === false) {
+    return <Text>No access to camera</Text>;
+  }
 
   return (
     <View style={styles.container}>
@@ -47,19 +120,49 @@ const CreatePostsScreen = () => {
                   </Pressable>
                 </ImageBackground>
               )}
+              {!photoURI && (
+                <Camera
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: "100%",
+                    width: "100%",
+                  }}
+                  type={type}
+                  ref={setCameraRef}
+                  ratio="1:1"
+                >
+                  <Pressable style={styles.buttonLoadPhoto} onPress={makePhoto}>
+                    <FontAwesome name="camera" size={24} color="#BDBDBD" />
+                  </Pressable>
+                </Camera>
+              )}
             </View>
             <Text style={styles.operationPhotoText}>Завантажте фото</Text>
-
             <TextInput
               placeholder="Назва..."
-              style={styles.inputName}
-            ></TextInput>
+              style={[
+                styles.inputName,
+                { color: isTitleFocused ? "#212121" : "#BDBDBD" },
+              ]}
+              value={title}
+              onChangeText={setTitle}
+              onFocus={() => setIsTitleFocused(true)}
+              onBlur={() => setIsTitleFocused(false)}
+            />
             <View style={styles.inputPlaceWrap}>
               <TextInput
                 placeholder="Місцевість..."
-                style={styles.inputPlace}
+                style={[
+                  styles.inputPlace,
+                  { color: isPlaceFocused ? "#212121" : "#BDBDBD" },
+                ]}
+                value={place}
+                onChangeText={setPlace}
+                onFocus={() => setIsPlaceFocused(true)}
+                onBlur={() => setIsPlaceFocused(false)}
               />
-
               <AntDesign
                 name="enviromento"
                 size={24}
@@ -67,8 +170,13 @@ const CreatePostsScreen = () => {
                 style={styles.inputPlaceIco}
               />
             </View>
-
-            <Pressable style={styles.postButton}>
+            <Pressable
+              style={[
+                styles.postButton,
+                isButtonPressed && { backgroundColor: "#FF6C00" },
+              ]}
+              onPress={handleSubmit}
+            >
               <Text style={styles.postButtonText}>Опубліковати</Text>
             </Pressable>
           </ScrollView>
@@ -80,8 +188,6 @@ const CreatePostsScreen = () => {
     </View>
   );
 };
-
-export default CreatePostsScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -151,7 +257,7 @@ const styles = StyleSheet.create({
     fontStyle: "normal",
     fontWeight: "400",
     fontSize: 16,
-    color: "#BDBDBD",
+    // color: "#BDBDBD",
   },
   inputPlaceIco: {
     position: "absolute",
@@ -175,7 +281,7 @@ const styles = StyleSheet.create({
     fontStyle: "normal",
     fontWeight: "500",
     fontSize: 16,
-    color: "#BDBDBD",
+    // color: "#BDBDBD",
   },
   postButtonTrash: {
     marginLeft: "auto",
@@ -190,3 +296,5 @@ const styles = StyleSheet.create({
     marginTop: "auto",
   },
 });
+
+export default CreatePostsScreen;
