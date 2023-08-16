@@ -1,4 +1,11 @@
-import { Text, View, Image, Pressable, StyleSheet } from "react-native";
+import {
+  Text,
+  View,
+  Image,
+  Pressable,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { AntDesign } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -36,6 +43,7 @@ const PostCard = ({ pictureSource, title, comments, likes, location }) => {
           />
           <Text style={styles.pictureStatistics}>{likes}</Text>
         </View>
+
         <View style={styles.pictureLocation}>
           <AntDesign
             name="enviromento"
@@ -43,9 +51,11 @@ const PostCard = ({ pictureSource, title, comments, likes, location }) => {
             color="#BDBDBD"
             style={{ marginRight: 4 }}
           />
-          <Text style={[styles.pictureStatistics, styles.underline]}>
-            {location}
-          </Text>
+          <TouchableOpacity onPress={() => navigation.navigate("Map")}>
+            <Text style={[styles.pictureStatistics, styles.underline]}>
+              {location}
+            </Text>
+          </TouchableOpacity>
         </View>
       </View>
     </View>

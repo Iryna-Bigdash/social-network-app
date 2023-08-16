@@ -18,7 +18,6 @@ const Tabs = createBottomTabNavigator();
 
 const Home = ({ route, navigation }) => {
   const routeName = getFocusedRouteNameFromRoute(route) ?? "PostsScreen";
-  console.log("routeName", routeName);
 
   return (
     <Tabs.Navigator

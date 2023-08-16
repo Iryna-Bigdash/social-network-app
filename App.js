@@ -10,15 +10,14 @@ import RegistrationScreen from "./Screens/RegistrationScreen";
 import LoginScreen from "./Screens/LoginScreen";
 import Home from "./Screens/Home";
 import CommentsScreen from "./Screens/CommentsScreen";
-
+import MapScreen from "./Screens/MapScreen";
 
 export default function App() {
-
   const [fontsLoaded] = useFonts({
-        "r-bolt": require("./fonts/Roboto-Bold.ttf"),
-        "r-medium": require("./fonts/Roboto-Medium.ttf"),
-        "r-regular": require("./fonts/Roboto-Regular.ttf"),
-      });
+    "r-bolt": require("./fonts/Roboto-Bold.ttf"),
+    "r-medium": require("./fonts/Roboto-Medium.ttf"),
+    "r-regular": require("./fonts/Roboto-Regular.ttf"),
+  });
 
   if (!fontsLoaded) {
     return null;
@@ -26,12 +25,16 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Registration" screenOptions={{headerShown: false,}}>
+      <Stack.Navigator
+        initialRouteName="Registration"
+        screenOptions={{ headerShown: false }}
+      >
         <Stack.Screen name="Registration" component={RegistrationScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="Comments" component={CommentsScreen} />
+        <Stack.Screen name="Map" component={MapScreen} options={{ headerShown: true }} />
       </Stack.Navigator>
     </NavigationContainer>
-  ); 
+  );
 }
