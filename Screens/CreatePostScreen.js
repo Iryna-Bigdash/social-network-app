@@ -21,14 +21,14 @@ import { Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 
 const CreatePostsScreen = () => {
+
+
   const [hasPermission, setHasPermission] = useState(null);
   const [cameraRef, setCameraRef] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
   const [location, setLocation] = useState(null);
   const [photoURI, setPhotoURI] = useState(null);
-  const [isTitleFocused, setIsTitleFocused] = useState(false);
-  const [isPlaceFocused, setIsPlaceFocused] = useState(false);
-  const [isButtonPressed, setIsButtonPressed] = useState(false);
+
   const [title, setTitle] = useState("");
   const [place, setPlace] = useState("");
 
@@ -96,6 +96,12 @@ const CreatePostsScreen = () => {
     return <Text>No access to camera</Text>;
   }
 
+  const handleDeletePhoto = () => {
+    setPhotoURI(null);
+    setTitle("");
+    setPlace("");
+  };
+
   return (
     <View style={styles.container}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -144,24 +150,18 @@ const CreatePostsScreen = () => {
               placeholder="Назва..."
               style={[
                 styles.inputName,
-                { color: isTitleFocused ? "#212121" : "#BDBDBD" },
               ]}
               value={title}
               onChangeText={setTitle}
-              onFocus={() => setIsTitleFocused(true)}
-              onBlur={() => setIsTitleFocused(false)}
             />
             <View style={styles.inputPlaceWrap}>
               <TextInput
                 placeholder="Місцевість..."
                 style={[
                   styles.inputPlace,
-                  { color: isPlaceFocused ? "#212121" : "#BDBDBD" },
                 ]}
                 value={place}
                 onChangeText={setPlace}
-                onFocus={() => setIsPlaceFocused(true)}
-                onBlur={() => setIsPlaceFocused(false)}
               />
               <AntDesign
                 name="enviromento"
@@ -173,7 +173,6 @@ const CreatePostsScreen = () => {
             <Pressable
               style={[
                 styles.postButton,
-                isButtonPressed && { backgroundColor: "#FF6C00" },
               ]}
               onPress={handleSubmit}
             >
@@ -182,7 +181,7 @@ const CreatePostsScreen = () => {
           </ScrollView>
         </KeyboardAvoidingView>
       </TouchableWithoutFeedback>
-      <Pressable style={styles.postButtonTrash}>
+      <Pressable style={styles.postButtonTrash} onPress={handleDeletePhoto}>
         <Feather name="trash-2" size={24} color="#BDBDBD" />
       </Pressable>
     </View>
