@@ -13,6 +13,7 @@ import {
   Keyboard,
   ImageBackground,
   StyleSheet,
+  TouchableOpacity,
 } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import { AntDesign } from "@expo/vector-icons";
@@ -20,32 +21,29 @@ import { FontAwesome } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 
+import { useDispatch } from "react-redux";
+import { addPost } from "../redux/slices/postsSlice";
+
 const CreatePostsScreen = () => {
-
-
+  const dispatch = useDispatch();
+  const [focusedInput, setFocusedInput] = useState(false);
+  const [isFormValid, setIsFormValid] = useState(false);
+  const [previewImage, setPreviewImage] = useState(null);
   const [hasPermission, setHasPermission] = useState(null);
   const [cameraRef, setCameraRef] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
   const [location, setLocation] = useState(null);
   const [photoURI, setPhotoURI] = useState(null);
-
+  const [isTakingPhoto, setIsTakingPhoto] = useState(false);
   const [title, setTitle] = useState("");
-  const [place, setPlace] = useState("");
+  const [locationText, setLocationText] = useState("");
 
   const navigation = useNavigation();
 
   useEffect(() => {
     (async () => {
-      const { status } = await Camera.requestCameraPermissionsAsync();
-      await MediaLibrary.requestPermissionsAsync();
-
-      setHasPermission(status === "granted");
-    })();
-  }, []);
-
-  useEffect(() => {
-    (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
+
       if (status !== "granted") {
         console.log("Permission to access location was denied");
       }
@@ -55,29 +53,86 @@ const CreatePostsScreen = () => {
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,
       };
+
       setLocation(coords);
     })();
   }, []);
 
-  const makePhoto = async () => {
-    if (cameraRef) {
-      const { uri } = await cameraRef.takePictureAsync({
-        quality: 1,
-        base64: true,
-      });
+  useEffect(() => {
+    (async () => {
+      try {
+        const { status } = await Camera.requestCameraPermissionsAsync();
+        await MediaLibrary.requestPermissionsAsync();
 
-      setPhotoURI(uri);
+        setHasPermission(status === "granted");
+      } catch (error) {
+        console.log("Error requesting permissions:", error);
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
+    setIsFormValid(previewImage && title && locationText);
+  }, [previewImage, title, locationText]);
+
+  const makePhoto = async () => {
+    if (isTakingPhoto) {
+      console.log(
+        "Making photo is already being processed. Await the first call."
+      );
+
+      return;
+    }
+
+    setIsTakingPhoto(true);
+
+    try {
+      if (cameraRef) {
+        const { uri } = await cameraRef.takePictureAsync({
+          quality: 1,
+          base64: true,
+        });
+
+        await MediaLibrary.createAssetAsync(uri);
+
+        const locationData = await Location.getCurrentPositionAsync({});
+        const { latitude, longitude } = locationData.coords;
+        setLocation({ latitude, longitude });
+
+        setPreviewImage(uri);
+        setPhotoURI(uri);
+      }
+    } catch (error) {
+      console.error("Error while taking a photo:", error);
+    } finally {
+      setIsTakingPhoto(false);
     }
   };
 
   const handleSubmit = async () => {
     console.log("Post created");
+    console.log(location);
 
-    if (location) {
+    if (location && isFormValid) {
       try {
-        const address = await Location.reverseGeocodeAsync(location);
+        const [address] = await Location.reverseGeocodeAsync({
+          latitude: location.latitude,
+          longitude: location.longitude,
+        });
+
         console.log("Location:", location);
         console.log("Address:", address);
+
+        setPreviewImage(previewImage);
+        setTitle(title);
+        setLocationText(locationText);
+        setLocation(location);
+
+        dispatch(addPost({ previewImage, title, locationText, location }));
+
+        setTimeout(() => {
+          navigation.navigate("Home");
+        }, 1000);
       } catch (error) {
         console.error("Error while reverse geocoding:", error);
       }
@@ -96,10 +151,22 @@ const CreatePostsScreen = () => {
     return <Text>No access to camera</Text>;
   }
 
-  const handleDeletePhoto = () => {
+  const resetImageAndLocation = () => {
+    setPreviewImage(null);
     setPhotoURI(null);
-    setTitle("");
-    setPlace("");
+    setLocation({ latitude: null, longitude: null });
+  };
+
+  const deletePreviewImage = () => {
+    resetImageAndLocation();
+  };
+
+  const handleDeletePhoto = () => {
+    resetImageAndLocation();
+  };
+
+  const handleTextInputChange = (text, setStateFunction) => {
+    setStateFunction(text);
   };
 
   return (
@@ -145,23 +212,36 @@ const CreatePostsScreen = () => {
                 </Camera>
               )}
             </View>
-            <Text style={styles.operationPhotoText}>Завантажте фото</Text>
+            <TouchableOpacity onPress={deletePreviewImage}>
+              <Text style={styles.operationPhotoText}>
+                {previewImage ? "Редагувати фото" : "Завантажте фото"}
+              </Text>
+            </TouchableOpacity>
+
             <TextInput
               placeholder="Назва..."
               style={[
                 styles.inputName,
+                focusedInput === "title" && [styles.inputFocused],
               ]}
               value={title}
-              onChangeText={setTitle}
+              onChangeText={(text) => handleTextInputChange(text, setTitle)}
+              name="title"
+              onFocus={() => setFocusedInput(true)}
+              onBlur={() => setFocusedInput(false)}
             />
             <View style={styles.inputPlaceWrap}>
               <TextInput
                 placeholder="Місцевість..."
                 style={[
                   styles.inputPlace,
+                  focusedInput === "location" && [styles.inputFocused],
                 ]}
-                value={place}
-                onChangeText={setPlace}
+                value={locationText}
+                onChangeText={(text) => handleTextInputChange(text, setTitle)}
+                name="location"
+                onFocus={() => setFocusedInput(true)}
+                onBlur={() => setFocusedInput(false)}
               />
               <AntDesign
                 name="enviromento"
@@ -170,13 +250,20 @@ const CreatePostsScreen = () => {
                 style={styles.inputPlaceIco}
               />
             </View>
+
             <Pressable
-              style={[
-                styles.postButton,
-              ]}
+              style={[styles.button, isFormValid && styles.buttonValid]}
               onPress={handleSubmit}
+              disabled={!isFormValid}
             >
-              <Text style={styles.postButtonText}>Опубліковати</Text>
+              <Text
+                style={[
+                  styles.buttonText,
+                  isFormValid && styles.buttonTextValid,
+                ]}
+              >
+                Опубліковати
+              </Text>
             </Pressable>
           </ScrollView>
         </KeyboardAvoidingView>
@@ -241,12 +328,14 @@ const styles = StyleSheet.create({
     fontStyle: "normal",
     fontWeight: "400",
     fontSize: 16,
-    color: "#BDBDBD",
   },
   inputPlaceWrap: {
     marginTop: 16,
     borderBottomColor: "#E8E8E8",
     borderBottomWidth: 1,
+  },
+  inputFocused: {
+    color: "#212121",
   },
   inputPlace: {
     paddingTop: 15,
@@ -256,31 +345,29 @@ const styles = StyleSheet.create({
     fontStyle: "normal",
     fontWeight: "400",
     fontSize: 16,
-    // color: "#BDBDBD",
   },
   inputPlaceIco: {
     position: "absolute",
     top: "50%",
     transform: [{ translateY: -14 }],
   },
-  postButton: {
-    marginTop: 32,
-    maxWidth: 343,
-    width: "100%",
-    backgroundColor: "#F6F6F6",
-    paddingHorizontal: 32,
-    paddingVertical: 16,
+  button: {
+    backgroundColor: "#E8E8E8",
     borderRadius: 100,
-    marginLeft: "auto",
-    marginRight: "auto",
+    minWidth: 343,
+    padding: 16,
+    marginTop: 27,
   },
-  postButtonText: {
+  buttonText: {
     textAlign: "center",
-    fontFamily: "r-medium",
-    fontStyle: "normal",
-    fontWeight: "500",
-    fontSize: 16,
-    // color: "#BDBDBD",
+    fontFamily: "r-regular",
+    color: "#BDBDBD",
+  },
+  buttonValid: {
+    backgroundColor: "#FF6C00",
+  },
+  buttonTextValid: {
+    color: "#fff",
   },
   postButtonTrash: {
     marginLeft: "auto",

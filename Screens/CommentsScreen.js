@@ -8,7 +8,8 @@ import {
   TextInput,
   StyleSheet,
 } from "react-native";
-
+import React, { useState, useEffect } from "react";
+import { useRoute } from "@react-navigation/native";
 import { db } from "../config";
 import { collection, getDocs } from "firebase/firestore";
 import { useDispatch } from "react-redux";
@@ -24,6 +25,7 @@ import { useNavigation } from "@react-navigation/native";
 // import Sunset from "../assets/images/sunset.jpg";
 // import AuthorAva from "../assets/images/AuthorAva.jpg";
 import VisitorAva from "../assets/images/VisitorAva.jpg";
+
 
 const CommentsScreen = () => {
   const dispatch = useDispatch();
