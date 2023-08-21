@@ -15,6 +15,17 @@ const firebaseConfig = {
   measurementId: "G-LRL6RGSQS9"
 };
 
+// const firebaseConfig = {
+//   apiKey: "AIzaSyDY-B4DsaUKPTljAqBz63aN3-K1WtCjIbQ",
+//   authDomain: "qqqqq-371e3.firebaseapp.com",
+//   databaseURL: "https://qqqqq-371e3-default-rtdb.firebaseio.com",
+//   projectId: "qqqqq-371e3",
+//   storageBucket: "qqqqq-371e3.appspot.com",
+//   messagingSenderId: "582572723270",
+//   appId: "1:582572723270:web:52726cd8295cb39fa30e47",
+//   measurementId: "G-T7G7SXFC67"
+// };
+
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 

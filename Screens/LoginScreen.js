@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import {
   TouchableWithoutFeedback,
@@ -14,6 +14,10 @@ import {
   ScrollView,
 } from "react-native";
 
+import { auth } from "../config";
+import { onAuthStateChanged } from "firebase/auth";
+import { loginDB } from "../redux/services/userService";
+
 import { useNavigation } from "@react-navigation/native";
 
 import PhotoBG from "../assets/images/bgrPhoto.png";
@@ -26,19 +30,42 @@ const LoginScreen = () => {
 
   const [focusEmailInput, setFocusEmailInput] = useState(false);
   const [focusPasswordInput, setFocusPasswordInput] = useState(false);
+  const [isFormValid, setIsFormValid] = useState(false);
 
   const [hidePassword, setHidePassword] = useState(true);
+
+  useEffect(() => {
+    setIsFormValid(email !== "" && password !== "");
+  }, [email, password]);
+
   const togglePassword = () => {
     setHidePassword((prevState) => !prevState);
     console.log("hidePassword", hidePassword);
   };
 
-  const login = () => {
-    console.log("Email: ", email);
-    console.log("Password: ", password);
-    setEmail("");
-    setPassword("");
-    navigation.navigate("Home");
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        navigation.navigate("Home");
+        setEmail("");
+        setPassword("");
+      }
+    });
+  }, []);
+
+  const handleSignIn = async () => {
+    if (isFormValid) {
+      setEmail(email);
+      setPassword(password);
+
+      try {
+        await loginDB(email, password);
+
+        navigation.navigate("Home");
+      } catch (error) {
+        console.log("No user in db");
+      }
+    }
   };
 
   return (
@@ -65,7 +92,10 @@ const LoginScreen = () => {
                   }
                   placeholder="Адреса електронної пошти"
                   value={email}
-                  onChangeText={setEmail}
+                  onChangeText={(text) => {
+                    setEmail(text.trim());
+                    console.log("Email:", text);
+                  }}
                   onFocus={() => setFocusEmailInput(true)}
                   onBlur={() => setFocusEmailInput(false)}
                 />
@@ -81,7 +111,10 @@ const LoginScreen = () => {
                   placeholder="Пароль"
                   name="password"
                   value={password}
-                  onChangeText={setPassword}
+                  onChangeText={(text) => {
+                    setPassword(text);
+                    console.log("Password:", text);
+                  }}
                   onFocus={() => setFocusPasswordInput(true)}
                   onBlur={() => setFocusPasswordInput(false)}
                   secureTextEntry={hidePassword}
@@ -96,7 +129,11 @@ const LoginScreen = () => {
                 </Pressable>
               </View>
 
-              <Pressable style={styles.button} onPress={login}>
+              <Pressable
+                style={styles.button}
+                onPress={handleSignIn}
+                disabled={!isFormValid}
+              >
                 <Text style={styles.buttonText}>Увійти</Text>
               </Pressable>
 
