@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-
 import {
   View,
   Text,
@@ -13,11 +12,13 @@ import {
   Pressable,
   Platform,
 } from "react-native";
-
 import { useNavigation } from "@react-navigation/native";
 
-import bgrPhoto from "../assets/images/bgrPhoto.png";
+import { onAuthStateChanged, updateProfile } from "firebase/auth";
+import { auth } from "../config";
+import { registerDB } from "../redux/services/userService";
 
+import bgrPhoto from "../assets/images/bgrPhoto.png";
 import { AntDesign } from "@expo/vector-icons";
 
 const RegistrationScreen = () => {
@@ -32,17 +33,33 @@ const RegistrationScreen = () => {
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
 
   const [hidePassword, setHidePassword] = useState(true);
+  const [isFormValid, setIsFormValid] = useState(false);
 
-  const registration = () => {
-    console.log("Login: ", login);
-    console.log("Email: ", email);
-    console.log("Password: ", password);
+  useEffect(() => {
+    setIsFormValid(login !== "" && email !== "" && password !== "");
+  }, [login, email, password]);
 
-    setLogin("");
-    setEmail("");
-    setPassword("");
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        navigation.navigate("Home");
+        setLogin("");
+        setEmail("");
+        setPassword("");
+      }
+    });
+  }, []);
 
-    navigation.navigate("Home", { login, email, password });
+  const handleSignIn = async () => {
+  
+    if (isFormValid) {
+      await registerDB(email, password);
+      updateProfile(auth.currentUser, {
+        displayName: login,
+      });
+
+      navigation.navigate("Home");
+    }
   };
 
   const togglePassword = () => {
@@ -119,7 +136,11 @@ const RegistrationScreen = () => {
                   </Text>
                 </Pressable>
               </View>
-              <Pressable style={styles.button} onPress={registration}>
+              <Pressable
+                style={styles.button}
+                onPress={handleSignIn}
+                disabled={!isFormValid}
+              >
                 <Text style={styles.buttonText}>Зареєcтруватися</Text>
               </Pressable>
               <Pressable
@@ -241,6 +262,14 @@ const styles = StyleSheet.create({
   },
   linkTextWrap: {
     marginTop: 16,
+  },
+  buttonAdd: {
+    position: "absolute",
+    width: 25,
+    height: 25,
+    right: -14,
+    bottom: 14,
+    backgroundColor: "#1B4371",
   },
   linkText: {
     fontFamily: "r-regular",

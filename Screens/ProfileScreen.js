@@ -19,6 +19,12 @@ import oldHouse from "../assets/images/oldHouse.jpg";
 
 import PostCard from "../components/PostCard";
 
+import { auth, db } from "../../config";
+import { collection, getDocs, doc, updateDoc } from "firebase/firestore";
+import { useDispatch, useSelector } from "react-redux";
+
+import { signOut, onAuthStateChanged } from "firebase/auth";
+
 const ProfileScreen = () => {
   const navigation = useNavigation();
 

@@ -35,6 +35,8 @@ const CommentsScreen = () => {
   const [isCommentEntered, setIsCommentEntered] = useState(false);
 
   const route = useRoute();
+  console.log(route)
+
   const { postId } = route.params;
 
   const getDataFromFirestore = async () => {
@@ -69,7 +71,7 @@ const CommentsScreen = () => {
     minute: "2-digit",
   })}`;
 
-  const hanlePostComment = () => {
+  const handlePostComment = () => {
     const trimmedComment = comment.trim();
 
     if (isCommentEntered && trimmedComment !== "") {
@@ -175,7 +177,7 @@ const CommentsScreen = () => {
           />
           <Pressable 
           style={styles.buttonPost}
-          onPress={hanlePostComment}
+          onPress={handlePostComment}
           disabled={!isCommentEntered || comment.trim() === ""}
           // style={styles.commentButton}
           >

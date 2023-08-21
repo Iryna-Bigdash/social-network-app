@@ -4,7 +4,7 @@ import {
     signOut,
     updateProfile,
   } from "firebase/auth";
-  import { auth, db } from "../../../config";
+  import { auth, db } from "../../config";
   import { collection, addDoc } from "firebase/firestore";
   
   export const writeUserToFirestore = async (login, email, password) => {
