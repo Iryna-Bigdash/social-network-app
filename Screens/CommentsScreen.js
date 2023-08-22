@@ -27,7 +27,8 @@ import { useNavigation } from "@react-navigation/native";
 import VisitorAva from "../assets/images/VisitorAva.jpg";
 
 
-const CommentsScreen = ({route}) => {
+const CommentsScreen = () => {
+
 
   const dispatch = useDispatch();
   const [focusedInput, setFocusedInput] = useState(null);
@@ -244,12 +245,12 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 6,
   },
   commentText: {
-    fontFamily: "Roboto-Regular",
+    fontFamily: "r-regular",
     fontSize: 13,
     lineHeight: 18,
   },
   commentDate: {
-    fontFamily: "Roboto-Regular",
+    fontFamily: "r-regular",
     textAlign: "right",
     color: "#BDBDBD",
     fontSize: 10,
@@ -277,7 +278,7 @@ const styles = StyleSheet.create({
     padding: 16,
     height: 50,
     borderRadius: 25,
-    fontFamily: "Roboto-Regular",
+    fontFamily: "r-regular",
     fontSize: 16,
   },
   inputFocused: {

@@ -142,15 +142,10 @@ const ProfileScreen = () => {
                     navigation.navigate("Comments", {
                       postId: postItem.id,
                     })
-
-
-                  // onPress={() =>
-                  //   navigation.navigate("Comments", {
-                  //     postId: postItem.id,
-                  //   })
                   }
-                />
+                />  
               ))}
+              
             </View>
           )}
         </ScrollView>

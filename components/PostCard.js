@@ -9,17 +9,30 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { AntDesign } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import Forest from "../assets/images/forest.jpg";
 
 const PostCard = ({ pictureSource, title, comments, likes, location, onLike, onComment }) => {
   const navigation = useNavigation();
 
-  console.log(pictureSource, 'pictureSource')
+console.log(pictureSource, 'POSTCARD pictureSource')
   
 
   return (
     <View style={styles.pictureCard}>
       <View style={styles.pictureWrap}>
-        <Image source={pictureSource} />
+        <Image 
+        source={pictureSource}
+        style={{
+          width: 343,
+          height: 240, 
+          borderRadius: 8, 
+          overflow: 'hidden',
+        }}
+        resizeMode="cover"
+        defaultSource={Forest}
+        onError={(error) => console.log('Image loading error:', error)}
+
+         />
       </View>
 
       <Text style={styles.nameOfPicture}>{title}</Text>

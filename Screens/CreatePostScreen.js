@@ -32,13 +32,7 @@ const CreatePostsScreen = () => {
   const [hasPermission, setHasPermission] = useState(null);
   const [cameraRef, setCameraRef] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
-  // const [location, setLocation] = useState(null);
-  const [location, setLocation] = useState({
-    latitude: null,
-    longitude: null,
-    latitudeDelta: 0.01,
-    longitudeDelta: 0.01,
-  });
+  const [location, setLocation] = useState(null);
   const [photoURI, setPhotoURI] = useState(null);
   const [isTakingPhoto, setIsTakingPhoto] = useState(false);
   const [title, setTitle] = useState("");
@@ -139,6 +133,7 @@ const CreatePostsScreen = () => {
         setTimeout(() => {
           navigation.navigate("Home");
         }, 1000);
+
       } catch (error) {
         console.error("Error while reverse geocoding:", error);
       }
