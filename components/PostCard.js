@@ -10,8 +10,11 @@ import { useNavigation } from "@react-navigation/native";
 import { AntDesign } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-const PostCard = ({ pictureSource, title, comments, likes, location }) => {
+const PostCard = ({ pictureSource, title, comments, likes, location, onLike, onComment }) => {
   const navigation = useNavigation();
+
+  console.log(pictureSource, 'pictureSource')
+  
 
   return (
     <View style={styles.pictureCard}>
@@ -29,6 +32,7 @@ const PostCard = ({ pictureSource, title, comments, likes, location }) => {
               size={24}
               color="#FF6C00"
               style={{ marginRight: 6 }}
+              onPress={onComment}
             />
           </Pressable>
 
@@ -40,6 +44,7 @@ const PostCard = ({ pictureSource, title, comments, likes, location }) => {
             size={24}
             color="#FF6C00"
             style={{ marginRight: 6 }}
+            onPress={onLike}
           />
           <Text style={styles.pictureStatistics}>{likes}</Text>
         </View>
@@ -53,7 +58,7 @@ const PostCard = ({ pictureSource, title, comments, likes, location }) => {
           />
           <TouchableOpacity onPress={() => navigation.navigate("Map")}>
             <Text style={[styles.pictureStatistics, styles.underline]}>
-              {location}
+              {location.locationText}
             </Text>
           </TouchableOpacity>
         </View>

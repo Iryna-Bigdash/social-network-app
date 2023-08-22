@@ -27,7 +27,8 @@ import { useNavigation } from "@react-navigation/native";
 import VisitorAva from "../assets/images/VisitorAva.jpg";
 
 
-const CommentsScreen = () => {
+const CommentsScreen = ({route}) => {
+
   const dispatch = useDispatch();
   const [focusedInput, setFocusedInput] = useState(null);
   const [comment, setComment] = useState("");

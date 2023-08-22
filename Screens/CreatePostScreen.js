@@ -32,7 +32,13 @@ const CreatePostsScreen = () => {
   const [hasPermission, setHasPermission] = useState(null);
   const [cameraRef, setCameraRef] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
-  const [location, setLocation] = useState(null);
+  // const [location, setLocation] = useState(null);
+  const [location, setLocation] = useState({
+    latitude: null,
+    longitude: null,
+    latitudeDelta: 0.01,
+    longitudeDelta: 0.01,
+  });
   const [photoURI, setPhotoURI] = useState(null);
   const [isTakingPhoto, setIsTakingPhoto] = useState(false);
   const [title, setTitle] = useState("");
@@ -238,7 +244,7 @@ const CreatePostsScreen = () => {
                   focusedInput === "location" && [styles.inputFocused],
                 ]}
                 value={locationText}
-                onChangeText={(text) => handleTextInputChange(text, setTitle)}
+                onChangeText={(text) => handleTextInputChange(text, setLocationText)}
                 name="location"
                 onFocus={() => setFocusedInput(true)}
                 onBlur={() => setFocusedInput(false)}
