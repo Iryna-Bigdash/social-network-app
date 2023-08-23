@@ -21,7 +21,7 @@ console.log(pictureSource, 'POSTCARD pictureSource')
     <View style={styles.pictureCard}>
       <View style={styles.pictureWrap}>
         <Image 
-        source={pictureSource}
+        pictureSource={pictureSource}
         style={{
           width: 343,
           height: 240, 
