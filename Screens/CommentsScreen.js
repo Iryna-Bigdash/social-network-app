@@ -5,9 +5,9 @@ import {
   KeyboardAvoidingView,
   Platform,
   Image,
-  TextInput,
   StyleSheet,
 } from "react-native";
+import { TextInput } from "react-native-gesture-handler";
 import React, { useState, useEffect } from "react";
 import { useRoute } from "@react-navigation/native";
 import { db } from "../config";
@@ -15,20 +15,19 @@ import { collection, getDocs } from "firebase/firestore";
 import { useDispatch } from "react-redux";
 import { addComment } from "../redux/slices/commentSlice";
 
-// import VisitorComment from "../components/VisitorComment";
-// import AuthorComment from "../components/AuthorComment";
+import VisitorComment from "../components/VisitorComment";
+import AuthorComment from "../components/AuthorComment";
 import CustomHeader from "../components/CustomHeader";
 
 import { AntDesign } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 
-// import Sunset from "../assets/images/sunset.jpg";
-// import AuthorAva from "../assets/images/AuthorAva.jpg";
+import AuthorAva from "../assets/images/AuthorAva.jpg";
 import VisitorAva from "../assets/images/VisitorAva.jpg";
 
-
 const CommentsScreen = () => {
-
+  const navigation = useNavigation();
+  // console.log(navigation.getState());
 
   const dispatch = useDispatch();
   const [focusedInput, setFocusedInput] = useState(null);
@@ -37,8 +36,6 @@ const CommentsScreen = () => {
   const [isCommentEntered, setIsCommentEntered] = useState(false);
 
   const route = useRoute();
-  console.log(route)
-
   const { postId } = route.params;
 
   const getDataFromFirestore = async () => {
@@ -73,7 +70,7 @@ const CommentsScreen = () => {
     minute: "2-digit",
   })}`;
 
-  const handlePostComment = () => {
+  const hanlePostComment = () => {
     const trimmedComment = comment.trim();
 
     if (isCommentEntered && trimmedComment !== "") {
@@ -88,72 +85,43 @@ const CommentsScreen = () => {
     }
   };
 
-  const navigation = useNavigation();
-  // console.log(navigation.getState());
-
   return (
     <View style={styles.container}>
       <CustomHeader title="Коментарі" />
-
       <ScrollView style={styles.screenMainContent}>
         <View style={styles.imageWrap}>
           {postItem && (
             <Image
               source={{ uri: postItem.data.previewImage }}
+              style={{
+                width: 343,
+                height: 240,
+                borderRadius: 8,
+                overflow: "hidden",
+              }}
               resizeMode="cover"
             />
           )}
         </View>
 
-        <View style={styles.mainContent}>
-          <View style={styles.publicationContainer}>
-            <View style={styles.commentsContainer}>
-              {postItem &&
-                postItem.data.comments.map((comment, index) => (
-                  <View
-                    style={[
-                      styles.commentItem,
-                      index % 2 === 0 ? styles.commentItemReverse : null,
-                    ]}
-                    key={index}
-                  >
-                    <Image
-                      style={styles.commentAvatar}
-                      source={VisitorAva}
-                      ico={VisitorAva}
-                      // source={require("../images/avatar-blank.jpg")}
-                    />
-                    <View
-                      style={[
-                        styles.comment,
-                        index % 2 === 0 ? styles.commentReverse : null,
-                      ]}
-                    >
-                      <Text style={styles.commentText}>{comment.comment}</Text>
-                      <Text style={styles.commentDate}>{comment.date}</Text>
-                    </View>
-                  </View>
-                ))}
-            </View>
-          </View>
-        </View>
-
-        {/* <VisitorComment
-          ico={VisitorAva}
-          text="Really love your most recent photo. I’ve been trying to capture the same thing for a few months and would love some tips!"
-          time="09 червня, 2020 | 08:40"
-        />
-        <AuthorComment
-          ico={AuthorAva}
-          text="A fast 50mm like f1.8 would help with the bokeh. I’ve been using primes as they tend to get a bit sharper images."
-          time="09 червня, 2020 | 09:14"
-        />
-
-        <VisitorComment
-          ico={VisitorAva}
-          text="Thank you! That was very helpful!"
-          time="09 червня, 2020 | 09:20"
-        /> */}
+        {postItem &&
+          postItem.data.comments.map((comment, index) =>
+            index % 2 !== 0 ? (
+              <AuthorComment
+                key={index}
+                ico={AuthorAva}
+                text={comment.comment}
+                time={comment.date}
+              />
+            ) : (
+              <VisitorComment
+                key={index}
+                ico={VisitorAva}
+                text={comment.comment}
+                time={comment.date}
+              />
+            )
+          )}
       </ScrollView>
 
       <KeyboardAvoidingView
@@ -168,7 +136,6 @@ const CommentsScreen = () => {
             placeholderTextColor={"#BDBDBD"}
             placeholder="Коментувати..."
             name="comment"
-            // style={styles.inputComment}
             value={comment}
             onChangeText={(text) => {
               setComment(text);
@@ -177,11 +144,11 @@ const CommentsScreen = () => {
             onFocus={() => setFocusedInput("comment")}
             onBlur={() => setFocusedInput(null)}
           />
-          <Pressable 
-          style={styles.buttonPost}
-          onPress={handlePostComment}
-          disabled={!isCommentEntered || comment.trim() === ""}
-          // style={styles.commentButton}
+
+          <Pressable
+            onPress={hanlePostComment}
+            disabled={!isCommentEntered || comment.trim() === ""}
+            style={styles.commentButton}
           >
             <AntDesign name="arrowup" size={24} color="white" />
           </Pressable>
