@@ -1,15 +1,13 @@
+import React from "react";
 import { View } from "react-native";
-
 import PostsScreen from "./PostsScreen";
 import ProfileScreen from "./ProfileScreen";
 import CreatePostsScreen from "./CreatePostScreen";
-
 import { Ionicons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { Octicons } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
-
-import CustomHeader from "../components/CustomHeader";
+import CustomHeader from "../components/Header";
 
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
@@ -17,6 +15,7 @@ import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
 const Tabs = createBottomTabNavigator();
 
 const Home = ({ route, navigation }) => {
+  
   const routeName = getFocusedRouteNameFromRoute(route) ?? "PostsScreen";
 
   return (

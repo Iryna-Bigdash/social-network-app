@@ -1,23 +1,59 @@
-import React from "react";
+import React, {useState,useEffect} from "react";
+import { useRoute } from "@react-navigation/native";
 import { View, StyleSheet, Dimensions, Pressable } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 
+import { db } from "../config";
+import {
+  collection,
+  getDocs,
+} from "firebase/firestore";
+
 const MapScreen = () => {
+  const [postItem, setPostItem] = useState(null);
+  const route = useRoute();
+  console.log("Route params:", route.params);
+  
+  const { postId } = route.params;
+
+  useEffect(() => {
+    const getDataFromFirestore = async () => {
+      try {
+        const snapshot = await getDocs(collection(db, "posts"));
+        const post = snapshot.docs
+          .map((doc) => ({
+            id: doc.id,
+            data: doc.data(),
+          }))
+          .filter((docData) => docData.id === postId);
+
+        setPostItem(post[0]);
+        return post;
+      } catch (error) {
+        console.log(error);
+        throw error;
+      }
+    };
+
+    getDataFromFirestore();
+  }, []);
+
 
   return (
     <View style={styles.container}>
+      {postItem && (
       <MapView
         style={styles.mapStyle}
         region={{
-          latitude: 37.78825,
-          longitude: -122.4324,
+          latitude: postItem.data.location.latitude,
+          longitude: postItem.data.location.longitude,
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
         }}
         mapType="standard"
         minZoomLevel={15}
         onMapReady={() => console.log("Map is ready")}
-        // onRegionChange={() => console.log("Region change")}
+        onRegionChange={() => console.log("Region change")}
       >
         <Marker
           title="I am here"
@@ -25,6 +61,7 @@ const MapScreen = () => {
           description='Hello'
         />
       </MapView>
+        )} 
     </View>
   );
 };

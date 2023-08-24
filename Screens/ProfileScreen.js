@@ -154,7 +154,11 @@ const ProfileScreen = () => {
                         <MaterialCommunityIcons
                           name="message-reply"
                           size={24}
-                          color={postItem.data.comments.length !== 0 ? "#FF6C00" : "#BDBDBD"}
+                          color={
+                            postItem.data.comments.length !== 0
+                              ? "#FF6C00"
+                              : "#BDBDBD"
+                          }
                           style={{ marginRight: 6, paddingTop: 6 }}
                         />
                       </Pressable>

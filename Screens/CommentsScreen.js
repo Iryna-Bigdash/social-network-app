@@ -17,7 +17,7 @@ import { addComment } from "../redux/slices/commentSlice";
 
 import VisitorComment from "../components/VisitorComment";
 import AuthorComment from "../components/AuthorComment";
-import CustomHeader from "../components/CustomHeader";
+import CustomHeader from "../components/Header";
 
 import { AntDesign } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
