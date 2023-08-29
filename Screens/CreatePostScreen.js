@@ -75,7 +75,21 @@ const CreatePostsScreen = () => {
     setIsFormValid(previewImage && title && locationText);
   }, [previewImage, title, locationText]);
 
+  const toggleCameraType = () => {
+    setType(
+      type === Camera.Constants.Type.back
+        ? Camera.Constants.Type.front
+        : Camera.Constants.Type.back
+    );
+  };
+
   const makePhoto = async () => {
+    
+    if (!hasPermission) {
+      console.log("Camera permission not granted.");
+      return;
+    }
+
     if (isTakingPhoto) {
       console.log(
         "Making photo is already being processed. Await the first call."
@@ -111,7 +125,7 @@ const CreatePostsScreen = () => {
 
   const handleSubmit = async () => {
     console.log("Post created");
-    console.log(location);
+    // console.log(location);
 
     if (location && isFormValid) {
       try {
@@ -162,10 +176,6 @@ const CreatePostsScreen = () => {
     resetImageAndLocation();
   };
 
-  const handleDeletePhoto = () => {
-    resetImageAndLocation();
-  };
-
   const handleTextInputChange = (text, setStateFunction) => {
     setStateFunction(text);
   };
@@ -179,6 +189,7 @@ const CreatePostsScreen = () => {
           <ScrollView style={styles.mainContent}>
             <View style={styles.photoWrap}>
               {photoURI && (
+                
                 <ImageBackground
                   source={{ uri: photoURI }}
                   resizeMode="cover"
@@ -194,6 +205,7 @@ const CreatePostsScreen = () => {
                   </Pressable>
                 </ImageBackground>
               )}
+              <View style={styles.container}>
               {!photoURI && (
                 <Camera
                   style={{
@@ -212,13 +224,16 @@ const CreatePostsScreen = () => {
                   </Pressable>
                 </Camera>
               )}
+              </View>
             </View>
+            <View style={{ flexDirection: "row", justifyContent: "space-between"}}>
             <TouchableOpacity onPress={deletePreviewImage}>
               <Text style={styles.operationPhotoText}>
                 {previewImage ? "Редагувати фото" : "Завантажте фото"}
               </Text>
             </TouchableOpacity>
-
+            <AntDesign name="retweet" size={24} color="#BDBDBD" style={{marginTop: 8}} onPress={toggleCameraType}/>
+              </View>
             <TextInput
               placeholder="Назва..."
               style={[
@@ -269,7 +284,7 @@ const CreatePostsScreen = () => {
           </ScrollView>
         </KeyboardAvoidingView>
       </TouchableWithoutFeedback>
-      <Pressable style={styles.postButtonTrash} onPress={handleDeletePhoto}>
+      <Pressable style={styles.postButtonTrash} onPress={resetImageAndLocation}>
         <Feather name="trash-2" size={24} color="#BDBDBD" />
       </Pressable>
     </View>
@@ -286,7 +301,7 @@ const styles = StyleSheet.create({
     paddingLeft: 16,
     paddingRight: 16,
     height: "auto",
-    height: "100%",
+    // height: "100%",
   },
   photoWrap: {
     width: "100%",
@@ -310,7 +325,18 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-
+  buttonTogglePhoto: {
+    backgroundColor: "white",
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: [{ translateY: -10 }, { translateX: -10 }],
+    alignItems: "center",
+    justifyContent: "center",
+  },
   operationPhotoText: {
     marginTop: 8,
     fontFamily: "r-medium",

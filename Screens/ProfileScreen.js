@@ -122,8 +122,8 @@ const ProfileScreen = () => {
           </Text>
           {posts && (
             <View>
+
               {posts.map((postItem, index) => (
-              
                 <View style={styles.pictureCard} key={postItem.id}>
                   <View style={styles.pictureWrap}>
                     <Image

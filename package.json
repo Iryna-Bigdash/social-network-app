@@ -8,6 +8,18 @@
     "ios": "expo start --ios",
     "web": "expo start --web"
   },
+  "expo": {
+    "android": {
+      "permissions": [
+        "CAMERA"
+      ]
+    },
+    "ios": {
+      "infoPlist": {
+        "NSCameraUsageDescription": "We need your permission to use the camera"
+      }
+    }
+  },
   "dependencies": {
     "@expo/vector-icons": "^13.0.0",
     "@firebase/auth": "^1.2.0",
