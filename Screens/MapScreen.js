@@ -12,7 +12,7 @@ import {
 const MapScreen = () => {
   const [postItem, setPostItem] = useState(null);
   const route = useRoute();
-  console.log("Route params:", route.params);
+  // console.log("Route params:", route.params);
   
   const { postId } = route.params;
 

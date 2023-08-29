@@ -37,6 +37,7 @@ const ProfileScreen = () => {
       if (user) {
         const user = auth.currentUser;
         setUserData(user);
+        // console.log('User Data:', user);
       }
     });
   }, []);
@@ -122,6 +123,7 @@ const ProfileScreen = () => {
           {posts && (
             <View>
               {posts.map((postItem, index) => (
+              
                 <View style={styles.pictureCard} key={postItem.id}>
                   <View style={styles.pictureWrap}>
                     <Image
@@ -187,7 +189,7 @@ const ProfileScreen = () => {
                         style={{ marginRight: 4 }}
                       />
                       <TouchableOpacity
-                        onPress={() => navigation.navigate("Map")}
+                        onPress={() => navigation.navigate("Map", { postId: postItem.id })}
                       >
                         <Text
                           style={[styles.pictureStatistics, styles.underline]}
