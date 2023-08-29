@@ -13,6 +13,46 @@ import oldHouse from "../assets/images/oldHouse.jpg";
 const PostsScreen = () => {
   const navigation = useNavigation();
 
+  const [posts, setPosts] = useState([]);
+  const [userData, setUserData] = useState([]);
+
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const user = auth.currentUser;
+        setUserData(user);
+      }
+    });
+  }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const getDataFromFirestore = async () => {
+        try {
+          const snapshot = await getDocs(collection(db, "posts"));
+          const postsList = snapshot.docs.map((doc) => ({
+            id: doc.id,
+            data: doc.data(),
+          }));
+          setPosts(postsList);
+          return postsList;
+        } catch (error) {
+          throw error;
+        }
+      };
+
+      getDataFromFirestore();
+    }, [])
+  );
+
+  const handleLogout = async () => {
+    await signOut(auth);
+    setUserData([]);
+    navigation.navigate("Login");
+  };
+
+
+
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.screenMainContent}>
@@ -21,36 +61,36 @@ const PostsScreen = () => {
             <Image source={RomanovaImg} />
           </View>
           <View style={styles.userBlockInfo}>
-            <Text style={styles.userBlockName}>Natali Romanova</Text>
+            <Text style={styles.userBlockName}>
+            {userData.displayName && userData.displayName}
+            </Text>
             <Text style={styles.userBlockEmail}>
-              email@example.com
+            {userData.email}
             </Text>
           </View>
         </View>
-
-        <PostCard
-          pictureSource={Forest}
+        <View>
+        {posts && (
+          <View>
+{posts.map((postItem) => (
+ <View key={postItem.id}>
+<PostCard
+          pictureSource={{ uri: postItem.data.previewImage }}
           title="Ліс"
           comments="0"
           likes="0"
           location="Ivano-Frankivs'k Region, Ukraine"
           hideLikes
         />
-        <PostCard
-          pictureSource={Sunset}
-          title="Захід на Чорному морі"
-          comments="0"
-          likes="0"
-          location="Odessa Region, Ukraine"
-        />
-        <PostCard
-          pictureSource={oldHouse}
-          title="Старий будиночок у Венеції"
-          comments="0"
-          likes="0"
-          location="Venice Region, Italy"
-          hideLikes
-        />
+        </View>
+)
+)
+}
+</View>
+        )}
+        </View>
+
+        
       </ScrollView>
     </View>
   );
